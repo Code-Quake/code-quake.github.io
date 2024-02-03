@@ -35,11 +35,11 @@
 
         const wiContent = await wiResponse.json();
 
-        var color = "black";
+        var color = "blue";
         if (wiContent.fields["System.State"] == "Active") color = "green";
 
         document.write(
-          "<a style='color:" +
+          "<a target='new' style='color:" +
             color +
             "' href=" +
             wiContent._links["html"]["href"] +
