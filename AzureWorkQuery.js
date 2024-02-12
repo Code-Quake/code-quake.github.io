@@ -10,8 +10,8 @@ function popupDialog(id) {
   document.getElementById(id).style.display = "block";
 }
 
-function show_messageNew(title, content) {
-  window.parent.alert("openModal");
+function show_messageNew(title) {
+  alert("openModal");
 }
 
 const apiUrl =
