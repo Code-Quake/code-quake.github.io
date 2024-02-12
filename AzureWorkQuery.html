@@ -1,66 +1,63 @@
 <html>
   <head>
     <style>
-      .box {
-        background-color: black;
-        height: 100vh;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-
-      p {
-        font-size: 17px;
-        align-items: center;
-      }
-
-      .box a {
-        display: inline-block;
-        background-color: #fff;
-        padding: 15px;
-        border-radius: 3px;
-      }
-
-      .modal {
-        align-items: center;
-        display: flex;
-        justify-content: center;
+      #overlay {
+        display: none;
         position: absolute;
         top: 0;
         bottom: 0;
-        left: 0;
-        right: 0;
-        background: rgba(24, 23, 23, 0.7);
-        transition: all 0.4s;
-        visibility: hidden;
-        opacity: 0;
+        background: #999;
+        width: 100%;
+        height: 100%;
+        opacity: 0.8;
+        z-index: 100;
       }
 
-      .content {
+      .popup {
+        display: none;
         position: absolute;
-        background: white;
-        width: 400px;
-        padding: 1em 2em;
-        border-radius: 4px;
+        top: 50%;
+        left: 50%;
+        background: #fff;
+        width: 500px;
+        height: 500px;
+        margin-left: -250px; /*Half the value of width to center div*/
+        margin-top: -250px; /*Half the value of height to center div*/
+        z-index: 200;
       }
 
-      .modal:target {
-        visibility: visible;
-        opacity: 1;
+      .popupclose {
+        float: right;
+        padding: 10px;
+        cursor: pointer;
       }
 
-      .box-close {
-        position: absolute;
-        top: 0;
-        right: 15px;
-        color: #fe0606;
-        text-decoration: none;
-        font-size: 30px;
+      .popupcontent {
+        padding: 10px;
+      }
+
+      #button {
+        cursor: pointer;
       }
     </style>
   </head>
-  <body></body>
+  <body>
+    <div id="overlay"></div>
+    <div id="content"></div>
+  </body>
   <script>
+    // Initialize Variables
+    var overlay = document.getElementById("overlay");
+    function closePopup(id) {
+      overlay.style.display = "none";
+      document.getElementById(id).style.display = "none";
+    }
+    // Show Overlay and Popup
+    function popupDialog(id) {
+      overlay.style.display = "block";
+      document.getElementById(id).style.display = "block";
+    }
+
     const apiUrl =
       "https://dev.azure.com/uhaul/U-Haul%20IT/_apis/wit/wiql/%7B3772faaa-ed72-44d9-90ac-2067d20937e5%7D?api-version=7.1-preview.2";
 
@@ -98,6 +95,32 @@
         var color = "#4682B4";
         if (wiContent.fields["System.State"] == "Active") color = "#00A36C";
 
+        //       html +=
+        // "<div style='border-radius: 5px;box-shadow: 3px 3px #202020;padding:5px;background:#151B54;border:1px solid #1589FF'>" +
+        // "<a target='new' style='color:" +
+        // color +
+        // "' href=" +
+        // wiContent._links["html"]["href"] +
+        // ">" +
+        // wiContent.fields["System.Title"] +
+        // "</a>&nbsp;" +
+        // "<a href='#" +
+        // workItem.id +
+        // "'>...</a>" +
+        // "</div>" +
+        // "<div id='" +
+        // workItem.id +
+        // "' class='modal'>" +
+        // "<div class='content'>" +
+        // "<h1>" +
+        // workItem.id +
+        // "</h1>" +
+        // wiContent.fields["Microsoft.VSTS.Common.ItemDescription"] +
+        // "<a href='#' class='box-close'> × </a>" +
+        // "</div>" +
+        // "</div>" +
+        // "<br />";
+
         html +=
           "<div style='border-radius: 5px;box-shadow: 3px 3px #202020;padding:5px;background:#151B54;border:1px solid #1589FF'>" +
           "<a target='new' style='color:" +
@@ -107,25 +130,33 @@
           ">" +
           wiContent.fields["System.Title"] +
           "</a>&nbsp;" +
-          "<a href='#" +
+          "<button onClick='popupDialog(" +
           workItem.id +
-          "'>...</a>" +
+          ")' id='btn" +
+          workItem.id +
+          "'>...</button>" +
           "</div>" +
-          "<div id='" +
+          "<div class='popup' id='" +
           workItem.id +
-          "' class='modal'>" +
-          "<div class='content'>" +
+          "'" +
+          ">" +
+          "<div class='popupcontrols'>" +
+          "<button class='popupclose' onclick=closePopup(" +
+          workItem.id +
+          ")>X</button>" +
+          "</div>" +
+          "<div class='popupcontent'>" +
           "<h1>" +
           workItem.id +
           "</h1>" +
           wiContent.fields["Microsoft.VSTS.Common.ItemDescription"] +
-          "<a href='#' class='box-close'> × </a>" +
           "</div>" +
           "</div>" +
           "<br />";
       }
 
-      document.body.innerHTML = html;
+      document.getElementById("content").innerHTML = html;
+
       console.log(content);
     })();
 
