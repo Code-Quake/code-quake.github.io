@@ -1,4 +1,64 @@
 <html>
+  <head>
+    <style>
+      .box {
+        background-color: black;
+        height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      p {
+        font-size: 17px;
+        align-items: center;
+      }
+
+      .box a {
+        display: inline-block;
+        background-color: #fff;
+        padding: 15px;
+        border-radius: 3px;
+      }
+
+      .modal {
+        align-items: center;
+        display: flex;
+        justify-content: center;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: rgba(24, 23, 23, 0.7);
+        transition: all 0.4s;
+        visibility: hidden;
+        opacity: 0;
+      }
+
+      .content {
+        position: absolute;
+        background: white;
+        width: 400px;
+        padding: 1em 2em;
+        border-radius: 4px;
+      }
+
+      .modal:target {
+        visibility: visible;
+        opacity: 1;
+      }
+
+      .box-close {
+        position: absolute;
+        top: 0;
+        right: 15px;
+        color: #fe0606;
+        text-decoration: none;
+        font-size: 30px;
+      }
+    </style>
+  </head>
   <body></body>
   <script>
     const apiUrl =
@@ -16,8 +76,9 @@
 
       const content = await rawResponse.json();
 
+      var html = "";
+
       for (var workItem of content.workItems) {
-        var wid = workItem.id;
         var workitemUrl =
           "https://dev.azure.com/uhaul/U-Haul%20IT/_apis/wit/workitems/" +
           workItem.id +
@@ -37,22 +98,42 @@
         var color = "#4682B4";
         if (wiContent.fields["System.State"] == "Active") color = "#00A36C";
 
-        document.write(
+        html +=
           "<div style='border-radius: 5px;box-shadow: 3px 3px #202020;padding:5px;background:#151B54;border:1px solid #1589FF'>" +
           "<a target='new' style='color:" +
-            color +
-            "' href=" +
-            wiContent._links["html"]["href"] +
-            ">" +
-            "(" +
-            wid +
-            ") " +
-            wiContent.fields["System.Title"] +
-            "</a></div>" +
-            "<br />"
-        );
+          color +
+          "' href=" +
+          wiContent._links["html"]["href"] +
+          ">" +
+          wiContent.fields["System.Title"] +
+          "</a>&nbsp;" +
+          "<a href='#" +
+          workItem.id +
+          "'>...</a>" +
+          "</div>" +
+          "<div id='" +
+          workItem.id +
+          "' class='modal'>" +
+          "<div class='content'>" +
+          "<h1>" +
+          workItem.id +
+          "</h1>" +
+          wiContent.fields["Microsoft.VSTS.Common.ItemDescription"] +
+          "<a href='#' class='box-close'> × </a>" +
+          "</div>" +
+          "</div>" +
+          "<br />";
       }
+
+      document.body.innerHTML = html;
       console.log(content);
     })();
+
+    // When the user clicks on <div>, open the popup
+    function myFunction(id) {
+      alert(id);
+      var popup = document.getElementById(id);
+      popup.classList.toggle("show");
+    }
   </script>
 </html>
