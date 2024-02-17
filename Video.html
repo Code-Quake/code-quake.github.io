@@ -1,0 +1,93 @@
+<html style="height: 100%">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, minimum-scale=1.0"
+    />
+    <meta name="description" content="Basic Template" />
+    <script type="text/javascript">
+      var PLAYERS = {
+        safari:
+          "/bluesteel/compile/safari.all.6cbef912d62ded2265e5734af617823b.js",
+        safari_debug:
+          "/bluesteel/compile/safari.debug.d9958b704921323d439d99549b57be3a.js",
+        asteroid:
+          "/bluesteel/compile/asteroid.all.3408c75e17fa9fc3fb4cdcd8dadb4fc6.js",
+      };
+    </script>
+    <script src="/bluesteel/compile/asteroid.all.3408c75e17fa9fc3fb4cdcd8dadb4fc6.js"></script>
+    <meta name="clearplay" content="4788" />
+    <script
+      type="text/javascript"
+      charset="utf-8"
+      async=""
+      data-requirecontext="loader"
+      data-requiremodule="https://www.vudu.com/bluesteel/compile/players/platjs-wrapper_shaka_255@2.1.0-beta.e5918c2.2/player_shaka_2.5.5.all.js"
+      src="https://www.vudu.com/bluesteel/compile/players/platjs-wrapper_shaka_255@2.1.0-beta.e5918c2.2/player_shaka_2.5.5.all.js"
+    ></script>
+  </head>
+
+  <body style="margin: 0; overflow: hidden; height: 100%">
+    <video
+      id="videoPlayer"
+      width="100%"
+      height="100%"
+      style="
+        max-width: 100vw;
+        max-height: 100vh;
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 1;
+      "
+      crossorigin="anonymous"
+      data-contentid="4788"
+      src="blob:https://www.vudu.com/3ec53bf9-6e1a-42fc-b686-a60f6b383fa7"
+    ></video>
+
+    <script>
+      function onLoad() {
+        function getParameterByName(name) {
+          var url = window.location.href.toLowerCase();
+          name = name.replace(/[\[\]]/g, "\\$&");
+          var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+            results = regex.exec(url);
+          if (!results) return null;
+          if (!results[2]) return "";
+          return decodeURIComponent(results[2].replace(/\+/g, " "));
+        }
+
+        if (getParameterByName("hls") !== "true") {
+          // needed to display subtitle track
+          // but breaks safari
+          document
+            .getElementsByTagName("video")[0]
+            .setAttribute("crossorigin", "anonymous");
+        }
+        if (getParameterByName("controls") === "true") {
+          document
+            .getElementsByTagName("video")[0]
+            .setAttribute("controls", "true");
+        }
+        var playerKey = getParameterByName("hls") ? "safari" : "asteroid";
+        playerKey += getParameterByName("debug") ? "_debug" : "";
+        var playerUrl = PLAYERS[playerKey];
+        var script = document.createElement("script");
+        script.src = playerUrl;
+        script.onload = function () {
+          var host = window.parent;
+          host.postMessage(
+            {
+              type: "com.vudu.player.frame.loaded",
+            },
+            "*"
+          );
+        };
+        document.head.appendChild(script);
+      }
+      window.onload = onLoad;
+    </script>
+  </body>
+</html>
